@@ -4,14 +4,14 @@ Built from your existing skill set, with one deliberate addition (flagged below)
 
 ## Extension (Chrome, Manifest V3)
 
-|Choice|Role|
-|---|---|
-|TypeScript + React|Popup UI|
-|Tailwind CSS|Styling for popup + injected overlay — same design system as the web platform|
-|Framer Motion|The overlay's reveal animation — this is the "aha" moment, worth the polish|
-|Zustand|Local state: selected category, generation status, overlay open/closed|
-|Shadow DOM|Isolates the injected overlay from host-page CSS|
-|**Vite + CRXJS** _(addition)_|MV3 build tooling with hot-reload — not in your list, but there's no real way around a bundler for extension dev|
+| Choice                        | Role                                                                                                             |
+| -------------------------------| ------------------------------------------------------------------------------------------------------------------|
+| TypeScript + React            | Popup UI                                                                                                         |
+| Tailwind CSS                  | Styling for popup + injected overlay — same design system as the web platform                                    |
+| Framer Motion                 | The overlay's reveal animation — this is the "aha" moment, worth the polish                                      |
+| Zustand                       | Local state: selected category, generation status, overlay open/closed                                           |
+| Shadow DOM                    | Isolates the injected overlay from host-page CSS                                                                 |
+| **Vite + CRXJS** _(addition)_ | MV3 build tooling with hot-reload — not in your list, but there's no real way around a bundler for extension dev |
 
 ## Backend API (separate repo)
 
@@ -54,8 +54,8 @@ The AI SDK makes swapping which model handles which step a one-line change, so t
 
 ## Hosting
 
-|Layer|Host|
-|---|---|
-|Backend (Express)|Render|
-|Web platform (Next.js)|Vercel|
-|Database|Neon (managed)|
+| Layer                  | Host           |
+| ------------------------| ----------------|
+| Backend (Express)      | Render         |
+| Web platform (Next.js) | Vercel         |
+| Database               | Neon (managed) |
