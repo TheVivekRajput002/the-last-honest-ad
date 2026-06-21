@@ -36,8 +36,8 @@ export default async function GalleryDetailPage({
     } else {
       error = 'Ad not found';
     }
-  } catch (err: any) {
-    error = err.message || 'Failed to fetch ad';
+  } catch (err) {
+    error = err instanceof Error ? err.message : 'Failed to fetch ad';
   }
 
   if (error || !ad) {

@@ -36,7 +36,7 @@ export default function Popup() {
           const apiRes = await fetch('http://localhost:4000/api/ads/extract', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text.substring(0, 5000) }) // Send first 5k chars
+            body: JSON.stringify({ pageText: text.substring(0, 5000) }) // Send first 5k chars
           });
 
           if (!apiRes.ok) throw new Error('Failed to classify page');

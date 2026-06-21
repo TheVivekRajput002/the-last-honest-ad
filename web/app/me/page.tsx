@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { apiFetch } from '@/lib/api';
+import { apiFetch, AdData } from '@/lib/api';
 import Link from 'next/link';
 import { Leaf, History, Share2 } from 'lucide-react';
 
@@ -21,11 +21,11 @@ export default async function PersonalTrackerPage() {
   if (response.data && !Array.isArray(response.data) && response.data.history) {
     history = response.data.history;
     scansCount = response.data.scansCount || history.length;
-    totalFootprint = response.data.totalFootprintSaved || history.reduce((sum: number, ad: any) => sum + ad.footprintSaved, 0);
+    totalFootprint = response.data.totalFootprintSaved || history.reduce((sum: number, ad: AdData) => sum + ad.footprintSaved, 0);
   } else {
     history = Array.isArray(response.data) ? response.data : [];
     scansCount = history.length;
-    totalFootprint = history.reduce((sum: number, ad: any) => sum + ad.footprintSaved, 0);
+    totalFootprint = history.reduce((sum: number, ad: AdData) => sum + ad.footprintSaved, 0);
   }
 
   return (
@@ -65,7 +65,7 @@ export default async function PersonalTrackerPage() {
           <h2 className="font-mono text-receipt-gray uppercase tracking-widest mb-6">Recent History</h2>
           
           <div className="space-y-4">
-            {history.map((ad: any) => (
+            {history.map((ad: AdData) => (
               <div key={ad.id} className="flex flex-col md:flex-row items-center gap-6 p-6 bg-white border border-ink/10 shadow-sm rounded-xl">
                 <div className="flex-1 w-full md:w-auto text-center md:text-left">
                   <h3 className="font-display uppercase text-xl mb-1 line-clamp-1">{ad.originalCopy}</h3>
@@ -90,7 +90,7 @@ export default async function PersonalTrackerPage() {
 
             {history.length === 0 && (
               <div className="text-center py-12 border border-dashed border-ink/20 rounded-xl">
-                <p className="font-mono text-receipt-gray">You haven't scanned any products yet.</p>
+                <p className="font-mono text-receipt-gray">You haven&apos;t scanned any products yet.</p>
                 <p className="font-mono text-xs text-receipt-gray mt-2">Use the Chrome extension to get started!</p>
               </div>
             )}

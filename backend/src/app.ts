@@ -10,7 +10,7 @@ const app = express();
 // Global Middleware
 app.use(helmet());
 app.use(cors({
-  origin: env.CORS_ORIGIN,
+  origin: true, // Reflects the request origin to allow any e-commerce site
   credentials: true
 }));
 app.use(compression());

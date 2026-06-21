@@ -29,10 +29,10 @@ export class AdsController {
   static async generate(req: Request, res: Response, next: NextFunction) {
     try {
       const schema = z.object({
-        productName: z.string().min(1, 'productName is required'),
-        categoryId: z.string().uuid('Invalid categoryId'),
+        productName: z.string().optional().default('Detected Product'),
+        categoryId: z.string().min(1, 'categoryId is required'),
         originalCopy: z.string().min(1, 'originalCopy is required'),
-        sourceUrl: z.string().url('Invalid sourceUrl'),
+        sourceUrl: z.string().optional().default('https://unknown.com'),
         material: z.string().optional(),
         format: z.enum(['CARD', 'RECEIPT']).optional(),
       });

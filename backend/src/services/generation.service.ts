@@ -1,5 +1,5 @@
 import { generateText } from 'ai';
-import { geminiModel } from '../lib/ai';
+import { groqModel } from '../lib/ai';
 import { prisma } from '../lib/prisma';
 import { env } from '../config/env';
 import { FootprintService } from './footprint.service';
@@ -14,15 +14,25 @@ export class GenerationService {
     format?: 'CARD' | 'RECEIPT';
     userId?: string;
   }) {
-    const category = await prisma.category.findUnique({
-      where: { id: data.categoryId },
+    let category = await prisma.category.findFirst({
+      where: { name: data.categoryId },
     });
+    
+    if (!category) {
+      try {
+        category = await prisma.category.findUnique({
+          where: { id: data.categoryId },
+        });
+      } catch (e) {
+        // Ignore invalid UUID errors
+      }
+    }
 
     if (!category) {
       throw new Error(`Category not found: ${data.categoryId}`);
     }
 
-    const footprint = await FootprintService.lookup(data.categoryId, data.material);
+    const footprint = await FootprintService.lookup(category.id, data.material);
 
     let honestCopy = '';
 
@@ -55,7 +65,7 @@ Crucial rules:
 `;
 
         const response = await generateText({
-          model: geminiModel,
+          model: groqModel as any,
           prompt,
         });
 
@@ -70,7 +80,7 @@ Crucial rules:
       data: {
         productName: data.productName,
         sourceUrl: data.sourceUrl,
-        categoryId: data.categoryId,
+        categoryId: category.id,
         originalCopy: data.originalCopy,
         honestCopy,
         co2eKg: footprint.co2eKg,

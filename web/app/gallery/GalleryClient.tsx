@@ -20,19 +20,21 @@ export default function GalleryClient({ initialAds }: { initialAds: AdData[] }) 
     },
     fetcher,
     {
-      fallbackData: [{ data: initialAds, hasMore: initialAds.length === 12 }],
+      fallbackData: [{ success: true, data: { items: initialAds, pagination: {} } }],
       revalidateFirstPage: false,
     }
   );
 
-  const ads = data ? data.flatMap(page => page.data) : [];
-  const isEmpty = data?.[0]?.data?.length === 0;
+  const ads = data ? data.flatMap(page => page.data?.items || []) : [];
+  const isEmpty = data?.[0]?.data?.items?.length === 0;
   const isReachingEnd =
-    isEmpty || (data && data[data.length - 1]?.hasMore === false);
+    isEmpty || (data && data[data.length - 1]?.data?.items?.length < 12);
 
   const observerTarget = useRef(null);
 
   useEffect(() => {
+    const currentTarget = observerTarget.current;
+    
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting && !isReachingEnd && !isValidating) {
@@ -42,16 +44,16 @@ export default function GalleryClient({ initialAds }: { initialAds: AdData[] }) 
       { threshold: 1.0 }
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
-  }, [observerTarget.current, isReachingEnd, isValidating, setSize, size]);
+  }, [isReachingEnd, isValidating, setSize, size]);
 
   if (error) return <div className="text-center py-24 font-mono text-stamp-red">Failed to load ads</div>;
 

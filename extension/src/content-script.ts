@@ -11,8 +11,8 @@ let shadowRoot: ShadowRoot | null = null;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'EXTRACT_PAGE') {
     try {
-      // Clone the document to avoid modifying the actual DOM
-      const documentClone = document.cloneNode(true) as Document;
+      // Clone the document safely using DOMParser to avoid Custom Element (__CE_registry) errors on sites like Amazon
+      const documentClone = new DOMParser().parseFromString(document.documentElement.outerHTML, 'text/html');
       
       // Use Readability to extract the main content
       const reader = new Readability(documentClone);
@@ -57,7 +57,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (data.success && data.data) {
           store.setGeneratedAd(data.data);
         } else {
-          store.setError(data.error || 'Failed to generate honest ad');
+          let errorMsg = 'Failed to generate honest ad';
+          if (typeof data.error === 'string') {
+            errorMsg = data.error;
+          } else if (data.error && typeof data.error === 'object' && data.error.message) {
+            errorMsg = data.error.message;
+          }
+          store.setError(errorMsg);
         }
       })
       .catch(err => {
