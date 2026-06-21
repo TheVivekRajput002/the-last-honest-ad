@@ -1,0 +1,121 @@
+import { Readability } from '@mozilla/readability';
+import { mountOverlay } from './overlay';
+import { useExtensionStore } from './store/useExtensionStore';
+
+console.log('[The Last Honest Ad] Content script injected successfully!');
+
+// State to keep track of the injected shadow root
+let overlayContainer: HTMLElement | null = null;
+let shadowRoot: ShadowRoot | null = null;
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'EXTRACT_PAGE') {
+    try {
+      // Clone the document to avoid modifying the actual DOM
+      const documentClone = document.cloneNode(true) as Document;
+      
+      // Use Readability to extract the main content
+      const reader = new Readability(documentClone);
+      const article = reader.parse();
+      
+      // Return the clean text
+      if (article && article.textContent) {
+        sendResponse({ success: true, text: article.textContent });
+      } else {
+        // Fallback to basic text if Readability fails
+        sendResponse({ success: true, text: document.body.innerText });
+      }
+    } catch (error: any) {
+      console.error('[The Last Honest Ad] Extraction error:', error);
+      sendResponse({ success: false, error: error.message });
+    }
+  } else if (message.type === 'SHOW_OVERLAY') {
+    injectOverlay();
+    sendResponse({ success: true });
+  } else if (message.type === 'HIDE_OVERLAY') {
+    if (overlayContainer) {
+      overlayContainer.remove();
+      overlayContainer = null;
+      shadowRoot = null;
+    }
+    sendResponse({ success: true });
+  } else if (message.type === 'START_GENERATION') {
+    injectOverlay();
+    
+    const { text, categoryId } = message.payload;
+    const store = useExtensionStore.getState();
+    store.setGenerating(true);
+    store.setError(null);
+    
+    fetch('http://localhost:4000/api/ads/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ originalCopy: text.substring(0, 5000), categoryId })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          store.setGeneratedAd(data.data);
+        } else {
+          store.setError(data.error || 'Failed to generate honest ad');
+        }
+      })
+      .catch(err => {
+        console.error('Generation Error:', err);
+        store.setError(err.message);
+      })
+      .finally(() => {
+        store.setGenerating(false);
+      });
+      
+    sendResponse({ success: true });
+  }
+  
+  return true; // Indicates asynchronous response
+});
+
+function injectOverlay() {
+  if (overlayContainer) return; // Already injected
+
+  // Create a host element for the shadow DOM
+  overlayContainer = document.createElement('div');
+  overlayContainer.id = 'the-last-honest-ad-overlay-root';
+  
+  // Style the host element to overlay the whole screen
+  Object.assign(overlayContainer.style, {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100vw',
+    height: '100vh',
+    zIndex: '2147483647', // Maximum z-index
+    pointerEvents: 'none', // Let clicks pass through if not on our UI
+  });
+
+  // Attach shadow DOM
+  shadowRoot = overlayContainer.attachShadow({ mode: 'open' });
+
+  // Create a container inside the shadow root for our React app
+  const appContainer = document.createElement('div');
+  appContainer.id = 'app';
+  appContainer.style.pointerEvents = 'auto'; // Re-enable pointer events for our app
+  appContainer.style.width = '100%';
+  appContainer.style.height = '100%';
+
+  shadowRoot.appendChild(appContainer);
+  document.body.appendChild(overlayContainer);
+
+  // We need to inject the CSS into the shadow root.
+  // Vite handles this usually, but we need to fetch our compiled CSS.
+  // In dev mode, we can use the injected style, but in production we need to link it.
+  const styleLink = document.createElement('link');
+  styleLink.rel = 'stylesheet';
+  styleLink.href = chrome.runtime.getURL('src/index.css'); // This assumes Vite builds it properly or we inject a built asset
+  shadowRoot.appendChild(styleLink);
+
+  // Mount the React app inside the shadow DOM
+  mountOverlay(appContainer);
+}
+
+// Instead of waiting for another script, let's render the React app right here
+// Let's import the OverlayApp and render it

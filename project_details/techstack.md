@@ -15,25 +15,25 @@ Built from your existing skill set, with one deliberate addition (flagged below)
 
 ## Backend API (separate repo)
 
-|Choice|Role|
-|---|---|
-|Node.js + Express + TypeScript|REST API — ingestion, footprint estimation, gallery/leaderboard endpoints|
-|Prisma|Type-safe ORM over the Postgres schema (categories, emission_factors, generated_ads, gallery_posts)|
-|Vercel AI SDK (`@ai-sdk/google`, `@ai-sdk/groq`)|AI calls — see "AI Layer" below|
-|Clerk + JWT|Auth — Clerk issues sessions on the web platform, backend verifies the JWT on incoming requests|
-|REST APIs|Simple CRUD + ranked-list endpoints|
+| Choice                                           | Role                                                                                                |
+| --------------------------------------------------| -----------------------------------------------------------------------------------------------------|
+| Node.js + Express + TypeScript                   | REST API — ingestion, footprint estimation, gallery/leaderboard endpoints                           |
+| Prisma                                           | Type-safe ORM over the Postgres schema (categories, emission_factors, generated_ads, gallery_posts) |
+| Vercel AI SDK (`@ai-sdk/google`, `@ai-sdk/groq`) | AI calls — see "AI Layer" below                                                                     |
+| Clerk + JWT                                      | Auth — Clerk issues sessions on the web platform, backend verifies the JWT on incoming requests     |
+| REST APIs                                        | Simple CRUD + ranked-list endpoints                                                                 |
 
 Leaderboard ranking is handled with a straightforward `ORDER BY footprint DESC` query via Prisma — no separate ranking store needed at this scale.
 
 ## Web Platform — gallery / leaderboard / landing (separate repo)
 
-|Choice|Role|
-|---|---|
-|Next.js + TypeScript + React|Pages, routing for the gallery feed, leaderboard, and landing page|
-|Tailwind CSS|Same design system as the extension|
-|Framer Motion|Gallery card transitions, leaderboard rank-change animations|
-|Zustand|Client state: filters, pagination|
-|Clerk|Optional sign-in for posting to the gallery under a handle|
+| Choice                       | Role                                                               |
+| ------------------------------| --------------------------------------------------------------------|
+| Next.js + TypeScript + React | Pages, routing for the gallery feed, leaderboard, and landing page |
+| Tailwind CSS                 | Same design system as the extension                                |
+| Framer Motion                | Gallery card transitions, leaderboard rank-change animations       |
+| Zustand                      | Client state: filters, pagination                                  |
+| Clerk                        | Optional sign-in for posting to the gallery under a handle         |
 
 ## Database
 

@@ -20,21 +20,21 @@
 
 ---
 
-### Task 1.1 — Backend repo scaffold
+### [x] Task 1.1 — Backend repo scaffold
 
-| Key | Detail |
-|-----|--------|
-| **What** | Initialize `backend/` with Node + Express + TypeScript + Prisma + Zod |
-| **Spec** | `backend.md §1 Folder Structure` — replicate the exact tree |
-| **Spec** | `techstack.md §Backend API` — dependency list |
-| **Deps** | `express`, `typescript`, `prisma`, `@prisma/client`, `zod`, `cors`, `dotenv`, `@clerk/backend`, `ai`, `@ai-sdk/google`, `@ai-sdk/groq` |
-| **V2 Performance** | Add `compression`, `helmet`, and `node-cache` (or redis) for robust API edge caching and security |
-| **Files** | `package.json`, `tsconfig.json`, `.env.example`, `src/index.ts` (hello-world server), `src/app.ts` (express app + CORS + JSON), `src/config/env.ts` (Zod-validated env vars) |
-| **Verify** | `npm run dev` starts on PORT 4000, `GET /health` returns `{ status: "ok" }` |
+| Key                | Detail                                                                                                                                                                       |
+| --------------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **What**           | Initialize `backend/` with Node + Express + TypeScript + Prisma + Zod                                                                                                        |
+| **Spec**           | `backend.md §1 Folder Structure` — replicate the exact tree                                                                                                                  |
+| **Spec**           | `techstack.md §Backend API` — dependency list                                                                                                                                |
+| **Deps**           | `express`, `typescript`, `prisma`, `@prisma/client`, `zod`, `cors`, `dotenv`, `@clerk/backend`, `ai`, `@ai-sdk/google`, `@ai-sdk/groq`                                       |
+| **V2 Performance** | Add `compression`, `helmet`, and `node-cache` (or redis) for robust API edge caching and security                                                                            |
+| **Files**          | `package.json`, `tsconfig.json`, `.env.example`, `src/index.ts` (hello-world server), `src/app.ts` (express app + CORS + JSON), `src/config/env.ts` (Zod-validated env vars) |
+| **Verify**         | `npm run dev` starts on PORT 4000, `GET /health` returns `{ status: "ok" }`                                                                                                  |
 
 ---
 
-### Task 1.2 — Extension repo scaffold
+### [x] Task 1.2 — Extension repo scaffold
 
 | Key | Detail |
 |-----|--------|
@@ -46,7 +46,7 @@
 
 ---
 
-### Task 1.3 — Web platform repo scaffold
+### [x] Task 1.3 — Web platform repo scaffold
 
 | Key | Detail |
 |-----|--------|
@@ -59,7 +59,7 @@
 
 ---
 
-### Task 1.4 — Shared design tokens & Fonts
+### [x] Task 1.4 — Shared design tokens & Fonts
 
 | Key | Detail |
 |-----|--------|
@@ -77,7 +77,7 @@
 
 ---
 
-### Task 2.1 — Prisma schema
+### [x] Task 2.1 — Prisma schema
 
 | Key | Detail |
 |-----|--------|
@@ -89,7 +89,7 @@
 
 ---
 
-### Task 2.2 — Prisma client singleton
+### [x] Task 2.2 — Prisma client singleton
 
 | Key | Detail |
 |-----|--------|
@@ -98,7 +98,7 @@
 
 ---
 
-### Task 2.3 — Seed data (categories + emission factors)
+### [x] Task 2.3 — Seed data (categories + emission factors)
 
 | Key | Detail |
 |-----|--------|
@@ -114,7 +114,7 @@
 
 ---
 
-### Task 3.1 — Lib setup (AI clients + Clerk)
+### [x] Task 3.1 — Lib setup (AI clients + Clerk)
 
 | Key | Detail |
 |-----|--------|
@@ -123,7 +123,7 @@
 
 ---
 
-### Task 3.2 — Middleware (auth + error handler)
+### [x] Task 3.2 — Middleware (auth + error handler)
 
 | Key | Detail |
 |-----|--------|
@@ -132,7 +132,7 @@
 
 ---
 
-### Task 3.3 — Extraction service + route (Universal Token-Optimized)
+### [x] Task 3.3 — Extraction service + route (Universal Token-Optimized)
 
 | Key | Detail |
 |-----|--------|
@@ -143,7 +143,7 @@
 
 ---
 
-### Task 3.4 — Footprint service
+### [x] Task 3.4 — Footprint service
 
 | Key | Detail |
 |-----|--------|
@@ -152,7 +152,7 @@
 
 ---
 
-### Task 3.5 — Generation service + route
+### [x] Task 3.5 — Generation service + route
 
 | Key | Detail |
 |-----|--------|
@@ -162,7 +162,7 @@
 
 ---
 
-### Task 3.6 — Gallery routes (High Performance Cache)
+### [x] Task 3.6 — Gallery routes (High Performance Cache)
 
 | Key | Detail |
 |-----|--------|
@@ -171,7 +171,7 @@
 
 ---
 
-### Task 3.7 — Leaderboard route (High Performance Cache)
+### [x] Task 3.7 — Leaderboard route (High Performance Cache)
 
 | Key | Detail |
 |-----|--------|
@@ -180,7 +180,7 @@
 
 ---
 
-### Task 3.8 — Categories + Users routes
+### [x] Task 3.8 — Categories + Users routes
 
 | Key | Detail |
 |-----|--------|
@@ -195,7 +195,7 @@
 
 ---
 
-### Task 4.1 — Manifest V3 + content script skeleton
+### [x] Task 4.1 — Manifest V3 + content script skeleton
 
 | Key | Detail |
 |-----|--------|
@@ -204,7 +204,7 @@
 
 ---
 
-### Task 4.2 — Popup UI (Smarter Classification)
+### [x] Task 4.2 — Popup UI (Smarter Classification)
 
 | Key | Detail |
 |-----|--------|
@@ -213,7 +213,7 @@
 
 ---
 
-### Task 4.3 — ComparisonCard & HonestReceipt components
+### [x] Task 4.3 — ComparisonCard & HonestReceipt components
 
 | Key | Detail |
 |-----|--------|
@@ -223,7 +223,7 @@
 
 ---
 
-### Task 4.4 — Injected overlay (Shadow DOM)
+### [x] Task 4.4 — Injected overlay (Shadow DOM)
 
 | Key | Detail |
 |-----|--------|
@@ -233,7 +233,7 @@
 
 ---
 
-### Task 4.5 — Publish + Share actions
+### [x] Task 4.5 — Publish + Share actions
 
 | Key | Detail |
 |-----|--------|
@@ -248,7 +248,7 @@
 
 ---
 
-### Task 5.1 — Layout, Navbar, Footer
+### [x] Task 5.1 — Layout, Navbar, Footer
 
 | Key | Detail |
 |-----|--------|
@@ -256,7 +256,7 @@
 
 ---
 
-### Task 5.2 — Landing page (`/`)
+### [x] Task 5.2 — Landing page (`/`)
 
 | Key | Detail |
 |-----|--------|
@@ -265,7 +265,7 @@
 
 ---
 
-### Task 5.3 — Gallery page (`/gallery` + `/gallery/[id]`)
+### [x] Task 5.3 — Gallery page (`/gallery` + `/gallery/[id]`)
 
 | Key | Detail |
 |-----|--------|
@@ -275,7 +275,7 @@
 
 ---
 
-### Task 5.4 — Leaderboard page (`/leaderboard`)
+### [x] Task 5.4 — Leaderboard page (`/leaderboard`)
 
 | Key | Detail |
 |-----|--------|
@@ -284,7 +284,7 @@
 
 ---
 
-### Task 5.5 — Auth pages + Personal Footprint Tracker (`/me`)
+### [x] Task 5.5 — Auth pages + Personal Footprint Tracker (`/me`)
 
 | Key | Detail |
 |-----|--------|
@@ -293,7 +293,7 @@
 
 ---
 
-### Task 5.6 — API client (`lib/api.ts`)
+### [x] Task 5.6 — API client (`lib/api.ts`)
 
 | Key | Detail |
 |-----|--------|
@@ -301,7 +301,7 @@
 
 ---
 
-### Task 5.7 — Dynamic Social Sharing (`/api/og`)
+### [x] Task 5.7 — Dynamic Social Sharing (`/api/og`)
 
 | Key | Detail |
 |-----|--------|
@@ -317,7 +317,7 @@
 
 ---
 
-### Task 6.1 — End-to-end integration testing
+### [x] Task 6.1 — End-to-end integration testing
 
 | Key | Detail |
 |-----|--------|
@@ -326,7 +326,7 @@
 
 ---
 
-### Task 6.2 — AI tone tuning
+### [x] Task 6.2 — AI tone tuning
 
 | Key | Detail |
 |-----|--------|
@@ -334,7 +334,7 @@
 
 ---
 
-### Task 6.3 — Export-as-image feature
+### [x] Task 6.3 — Export-as-image feature
 
 | Key | Detail |
 |-----|--------|
@@ -342,7 +342,7 @@
 
 ---
 
-### Task 6.4 — Responsive design + accessibility
+### [x] Task 6.4 — Responsive design + accessibility
 
 | Key | Detail |
 |-----|--------|
@@ -350,7 +350,7 @@
 
 ---
 
-### Task 6.5 — Deployment
+### [x] Task 6.5 — Deployment
 
 | Key | Detail |
 |-----|--------|

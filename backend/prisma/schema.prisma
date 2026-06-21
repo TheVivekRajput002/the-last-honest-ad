@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  emissionFactors EmissionFactor[]
+  generatedAds    GeneratedAd[]
+}
+
+model EmissionFactor {
+  id          String   @id @default(uuid())
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  material    String?  // optional refinement signal, e.g. "polyester"
+  co2eKg      Float
+  waterLiters Float
+  wasteKg     Float
+  source      String   // citation, required — credibility requirement from PRD
+  createdAt   DateTime @default(now())
+}
+
+enum AdFormat {
+  CARD
+  RECEIPT
+}
+
+model GeneratedAd {
+  id             String       @id @default(uuid())
+  sourceUrl      String
+  productName    String
+  categoryId     String
+  category       Category     @relation(fields: [categoryId], references: [id])
+  originalCopy   String
+  honestCopy     String
+  co2eKg         Float        // footprint snapshot at generation time
+  waterLiters    Float
+  wasteKg        Float
+  sourceCitation String
+  isPublic       Boolean      @default(false)
+  format         AdFormat     @default(CARD)
+  userId         String?
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  galleryPost    GalleryPost?
+  createdAt      DateTime     @default(now())
+}
+
+model GalleryPost {
+  id            String      @id @default(uuid())
+  generatedAdId String      @unique
+  generatedAd   GeneratedAd @relation(fields: [generatedAdId], references: [id], onDelete: Cascade)
+  likes         Int         @default(0)
+  shares        Int         @default(0)
+  createdAt     DateTime    @default(now())
+}
+
+model User {
+  id                  String        @id @default(uuid())
+  clerkId             String        @unique
+  handle              String?       @unique
+  totalFootprintSaved Float         @default(0.0)
+  scansCount          Int           @default(0)
+  generatedAds        GeneratedAd[]
+  createdAt           DateTime      @default(now())
+}
