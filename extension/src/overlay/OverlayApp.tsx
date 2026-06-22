@@ -33,53 +33,60 @@ export default function OverlayApp() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-[2147483647]">
+    <div className="absolute inset-0 flex flex-col bg-paper border-l-4 border-ink shadow-[-10px_0_30px_rgba(0,0,0,0.15)] pointer-events-auto overflow-hidden z-[2147483647]">
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0, y: 50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative max-w-4xl w-full mx-4"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 50 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="relative h-full w-full flex flex-col"
         >
-          <div className="absolute -top-12 right-0 flex gap-2">
-            {!isGenerating && generatedAd && !error && (
+          <div className="flex-shrink-0 flex justify-between items-center p-4 border-b-2 border-ink bg-white">
+            <h2 className="font-display font-bold text-lg uppercase tracking-wider text-ink">Analysis Split View</h2>
+            <div className="flex gap-2">
+              {!isGenerating && generatedAd && !error && (
+                <button 
+                  onClick={handleExport}
+                  disabled={isExporting}
+                  aria-label="Export as image"
+                  className="p-2 bg-paper text-ink rounded-full shadow-overlay hover:bg-white transition-colors disabled:opacity-50 flex items-center justify-center"
+                >
+                  <Download size={20} />
+                </button>
+              )}
               <button 
-                onClick={handleExport}
-                disabled={isExporting}
-                aria-label="Export as image"
-                className="p-2 bg-paper text-ink rounded-full shadow-overlay hover:bg-white transition-colors disabled:opacity-50 flex items-center justify-center"
+                onClick={handleClose}
+                aria-label="Close split view"
+                className="p-2 bg-paper text-ink rounded-full shadow-overlay hover:bg-white transition-colors flex items-center justify-center"
               >
-                <Download size={24} />
+                <X size={20} />
               </button>
-            )}
-            <button 
-              onClick={handleClose}
-              aria-label="Close overlay"
-              className="p-2 bg-paper text-ink rounded-full shadow-overlay hover:bg-white transition-colors flex items-center justify-center"
-            >
-              <X size={24} />
-            </button>
+            </div>
           </div>
 
-          {error && (
-            <div className="p-6 bg-white rounded-xl shadow-overlay text-center border-l-4 border-stamp-red">
-              <h2 className="text-xl font-display text-stamp-red mb-2">Error Generation Failed</h2>
-              <p className="font-body">{error}</p>
-            </div>
-          )}
+          <div className="flex-1 overflow-y-auto p-6 flex flex-col">
+            {error && (
+              <div className="p-6 bg-white rounded-xl shadow-overlay text-center border-l-4 border-stamp-red">
+                <h2 className="text-xl font-display text-stamp-red mb-2">Error Generation Failed</h2>
+                <p className="font-body">{error}</p>
+              </div>
+            )}
 
-          {isGenerating && !error && <SkeletonLoader />}
+            {isGenerating && !error && <SkeletonLoader />}
 
-          {!isGenerating && generatedAd && !error && (
-            <div ref={cardRef} className="bg-transparent rounded-2xl">
-              {generatedAd.format === 'RECEIPT' ? (
-                <HonestReceipt ad={generatedAd} />
-              ) : (
-                <ComparisonCard ad={generatedAd} />
-              )}
-            </div>
-          )}
+            {!isGenerating && generatedAd && !error && (
+              <div ref={cardRef} className="bg-transparent rounded-2xl flex justify-center w-full">
+                <div className="w-full max-w-[400px]">
+                  {generatedAd.format === 'RECEIPT' ? (
+                    <HonestReceipt ad={generatedAd} />
+                  ) : (
+                    <ComparisonCard ad={generatedAd} />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

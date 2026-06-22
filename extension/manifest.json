@@ -5,7 +5,8 @@
   "description": "Expose the true environmental footprint of products on e-commerce sites.",
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "sidePanel"
   ],
   "host_permissions": [
     "https://*/*",
@@ -14,6 +15,9 @@
   "action": {
     "default_popup": "index.html",
     "default_title": "The Last Honest Ad"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   },
   "content_scripts": [
     {

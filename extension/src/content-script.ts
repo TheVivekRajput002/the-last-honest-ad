@@ -88,12 +88,12 @@ function injectOverlay() {
   overlayContainer = document.createElement('div');
   overlayContainer.id = 'the-last-honest-ad-overlay-root';
   
-  // Style the host element to overlay the whole screen
+  // Style the host element to overlay on the right side like a split tab
   Object.assign(overlayContainer.style, {
     position: 'fixed',
     top: '0',
-    left: '0',
-    width: '100vw',
+    right: '0',
+    width: '500px',
     height: '100vh',
     zIndex: '2147483647', // Maximum z-index
     pointerEvents: 'none', // Let clicks pass through if not on our UI
