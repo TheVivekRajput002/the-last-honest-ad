@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}, getClerkToken?: () => Promise<string | null>) {
   const headers = new Headers(options.headers);
@@ -32,7 +32,16 @@ export interface AdData {
   originalCopy: string;
   honestCopy: string;
   categoryId: string;
-  footprintSaved: number;
+  footprintSaved: number; // For backward compatibility if used directly
+  co2eKg: number;
+  waterLiters: number;
+  wasteKg: number;
+  analysis?: {
+    honestAd: string;
+    impactAnalysis: string;
+    badEffects: string;
+    hiddenProblems: string;
+  };
   format: 'CARD' | 'RECEIPT';
   createdAt: string;
   userId?: string;

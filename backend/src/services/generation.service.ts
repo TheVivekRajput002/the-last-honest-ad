@@ -35,21 +35,21 @@ export class GenerationService {
     const footprint = await FootprintService.lookup(category.id, data.material);
 
     let honestCopy = '';
+    let analysisJson: any = null;
 
     if (env.GOOGLE_GENERATIVE_AI_API_KEY === 'AIzaSyPlaceholder') {
       console.log('[GenerationService] Sandbox mode: generating mock copy');
-      const mockCopies: Record<string, string> = {
-        'fast-fashion': `This cheap ${data.material || 'apparel'} was made to be discarded. It used ${footprint.waterLiters}L of water and will end up in a landfill next season. But at least you'll look trendy for a week!`,
-        'electronics': `A shiny new ${data.productName || 'device'} that will be obsolete in 18 months. It created ${footprint.wasteKg}kg of e-waste and ${footprint.co2eKg}kg of CO2. Buy now, throw away later!`,
-        'flights': `Fly to your destination while dumping ${footprint.co2eKg}kg of CO2 straight into the upper atmosphere. Carbon offsets won't save this one!`,
-        'fast-food': `Indulge in a factory-farmed ${data.material || 'meal'} that generated ${footprint.co2eKg}kg of greenhouse gases and ${footprint.waterLiters}L of water waste. Your body and the environment will pay later.`,
-        'delivery': `Pay an underpaid courier to drive across town just to bring you a single item. Emissions: ${footprint.co2eKg}kg of CO2. Extreme convenience has a price.`,
-        'home-goods': `Plastic home decor that will chip within months. Made from fossil fuels, emitting ${footprint.co2eKg}kg of CO2 during production. Modern trash for your living room.`,
+      const mockAnalysis = {
+        honestAd: "This product's lifecycle is estimated to generate substantial environmental damage.",
+        impactAnalysis: `The production process generated ${footprint.co2eKg} kg of CO2e and consumed ${footprint.waterLiters} liters of water.`,
+        badEffects: "Contributes heavily to landfill accumulation and resource depletion.",
+        hiddenProblems: "Invisible pollution and long-term ecosystem degradation often result from the disposal of this item."
       };
-      honestCopy = mockCopies[category.name] || `A product you do not need. It cost the planet ${footprint.co2eKg}kg of carbon emissions and ${footprint.waterLiters}L of fresh water. Buy it anyway?`;
+      honestCopy = mockAnalysis.honestAd;
+      analysisJson = mockAnalysis;
     } else {
       try {
-        const prompt = `You are a satirical copywriter writing for "The Last Honest Ad". Here is real ad copy for a product named "${data.productName}" in the category "${category.name}".
+        const prompt = `You are an environmental analyst writing an impact report for a product. Here is the marketing copy for a product named "${data.productName}" in the category "${category.name}".
 Original Copy: "${data.originalCopy}"
 Its estimated environmental footprint:
 - CO2e: ${footprint.co2eKg} kg
@@ -57,19 +57,27 @@ Its estimated environmental footprint:
 - Waste: ${footprint.wasteKg} kg
 Sourced from: ${footprint.sourceCitation}
 
-Rewrite this ad to sound like a perky infomercial that went terribly wrong. Start with their marketing enthusiasm, but immediately hit them with the brutal environmental reality using the exact footprint numbers provided.
-Crucial rules:
-1. Make it funny, punchy, and highly satirical.
-2. DO NOT be preachy, depressing, or use generic guilt trips. Use the brand's own faux-positivity against them.
-3. Keep it to 2-3 short sentences max. End with a sarcastic tagline.
-`;
+Return ONLY a valid JSON object with the following fields:
+- "honestAd": A truthful, punchy, 1-2 sentence honest marketing copy that replaces the original claims with harsh ecological reality.
+- "impactAnalysis": A factual, scientific 2-sentence summary of the exact environmental footprint using the provided numbers.
+- "badEffects": Specific detrimental ecological or social effects of this product type.
+- "hiddenProblems": Issues not immediately obvious to the consumer (e.g. microplastics, e-waste hazards, supply chain issues).
+
+Ensure the response is strictly JSON and nothing else.`;
 
         const response = await generateText({
           model: groqModel as any,
           prompt,
         });
 
-        honestCopy = response.text.trim();
+        const jsonMatch = response.text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          honestCopy = parsed.honestAd || "Environmental impact analysis complete.";
+          analysisJson = parsed;
+        } else {
+          honestCopy = response.text.trim();
+        }
       } catch (err: any) {
         console.error('[GenerationService] AI generation failed:', err.message || err);
         throw new Error('Failed to generate honest ad copy');
@@ -87,6 +95,7 @@ Crucial rules:
         waterLiters: footprint.waterLiters,
         wasteKg: footprint.wasteKg,
         sourceCitation: footprint.sourceCitation,
+        analysis: analysisJson,
         format: data.format || 'CARD',
         userId: data.userId || null,
       },

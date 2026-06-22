@@ -46,6 +46,7 @@ model GeneratedAd {
   waterLiters    Float
   wasteKg        Float
   sourceCitation String
+  analysis       Json?
   isPublic       Boolean      @default(false)
   format         AdFormat     @default(CARD)
   userId         String?

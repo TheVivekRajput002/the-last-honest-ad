@@ -1,6 +1,7 @@
 import { Readability } from '@mozilla/readability';
 import { mountOverlay } from './overlay';
 import { useExtensionStore } from './store/useExtensionStore';
+import cssText from './index.css?inline';
 
 console.log('[The Last Honest Ad] Content script injected successfully!');
 
@@ -111,13 +112,10 @@ function injectOverlay() {
   shadowRoot.appendChild(appContainer);
   document.body.appendChild(overlayContainer);
 
-  // We need to inject the CSS into the shadow root.
-  // Vite handles this usually, but we need to fetch our compiled CSS.
-  // In dev mode, we can use the injected style, but in production we need to link it.
-  const styleLink = document.createElement('link');
-  styleLink.rel = 'stylesheet';
-  styleLink.href = chrome.runtime.getURL('src/index.css'); // This assumes Vite builds it properly or we inject a built asset
-  shadowRoot.appendChild(styleLink);
+  // Inject the Tailwind CSS directly into the shadow root
+  const styleTag = document.createElement('style');
+  styleTag.textContent = cssText;
+  shadowRoot.appendChild(styleTag);
 
   // Mount the React app inside the shadow DOM
   mountOverlay(appContainer);

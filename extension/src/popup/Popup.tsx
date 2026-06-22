@@ -10,6 +10,7 @@ export default function Popup() {
     setExtracting, 
     setExtractedText, 
     setSuggestedCategory,
+    error,
     setError 
   } = useExtensionStore();
 
@@ -71,6 +72,11 @@ export default function Popup() {
           <LoadingState />
         ) : (
           <>
+            {error && (
+              <div className="mb-4 p-3 bg-stamp-red/10 border border-stamp-red/30 rounded text-stamp-red text-sm font-mono">
+                {error}
+              </div>
+            )}
             <div className="space-y-6">
               <div>
                 <p className="text-xs font-mono text-receipt-gray mb-2 uppercase">Classification</p>

@@ -5,9 +5,10 @@ import { ComparisonCard } from '@/components/ComparisonCard';
 import { HonestReceipt } from '@/components/HonestReceipt';
 import { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
   // We can fetch data here to set dynamic title and OG image, but for MVP we'll just set OG image
-  const ogUrl = `/api/og?id=${params.id}`;
+  const ogUrl = `/api/og?id=${id}`;
   
   return {
     title: 'The Last Honest Ad - Gallery Item',
@@ -24,13 +25,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function GalleryDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   let ad: AdData | null = null;
   let error = null;
 
   try {
-    const data = await apiFetch(`/ads/${params.id}`);
+    const data = await apiFetch(`/ads/${id}`);
     if (data.success && data.data) {
       ad = data.data;
     } else {
