@@ -10,7 +10,8 @@ export function HonestReceipt({ ad }: AdProps) {
     honestAd: ad.honestCopy,
     impactAnalysis: 'PENDING',
     badEffects: 'N/A',
-    hiddenProblems: 'N/A'
+    hiddenProblems: 'N/A',
+    ecoAlternative: 'N/A'
   };
 
   return (
@@ -52,16 +53,22 @@ export function HonestReceipt({ ad }: AdProps) {
       <div className="border-b-2 border-dashed border-receipt-gray/50 pb-4 mb-6 space-y-4">
         <div>
           <p className="font-bold text-xs uppercase text-receipt-gray mb-1">Detailed Impact:</p>
-          <p className="leading-tight text-xs">{analysis.impactAnalysis}</p>
+          <p className="leading-tight text-xs whitespace-pre-wrap">{analysis.impactAnalysis}</p>
         </div>
         <div>
           <p className="font-bold text-xs uppercase text-receipt-gray mb-1 text-ad-coral">Detrimental Effects:</p>
-          <p className="leading-tight text-xs">{analysis.badEffects}</p>
+          <p className="leading-tight text-xs whitespace-pre-wrap">{analysis.badEffects}</p>
         </div>
         <div>
           <p className="font-bold text-xs uppercase text-receipt-gray mb-1 text-warning-amber text-yellow-700">Hidden Costs:</p>
-          <p className="leading-tight text-xs">{analysis.hiddenProblems}</p>
+          <p className="leading-tight text-xs whitespace-pre-wrap">{analysis.hiddenProblems}</p>
         </div>
+        {analysis.ecoAlternative && analysis.ecoAlternative !== 'N/A' && (
+          <div>
+            <p className="font-bold text-xs uppercase text-receipt-gray mb-1 text-green-600">Eco Alternative:</p>
+            <p className="leading-tight text-xs text-green-600 whitespace-pre-wrap">{analysis.ecoAlternative}</p>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between items-end mb-8">

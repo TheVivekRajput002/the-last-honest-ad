@@ -5,8 +5,8 @@ export default async function GalleryPage() {
   let initialAds: AdData[] = [];
   try {
     const data = await apiFetch(`/gallery?page=1&limit=12`);
-    if (data && data.data) {
-      initialAds = data.data;
+    if (data && data.data && data.data.items) {
+      initialAds = data.data.items;
     }
   } catch (error) {
     console.error("Failed to fetch initial gallery ads", error);

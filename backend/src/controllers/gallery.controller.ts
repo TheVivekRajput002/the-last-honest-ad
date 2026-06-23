@@ -130,12 +130,19 @@ export class GalleryController {
 
       const total = await prisma.galleryPost.count({ where });
 
+      const mappedItems = items.map((post) => ({
+        ...post.generatedAd,
+        galleryPostId: post.id,
+        likes: post.likes,
+        shares: post.shares,
+      }));
+
       res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=30');
 
       res.status(200).json({
         success: true,
         data: {
-          items,
+          items: mappedItems,
           pagination: {
             page: query.page,
             limit: query.limit,

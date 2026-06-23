@@ -6,7 +6,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "sidePanel"
+    "sidePanel",
+    "cookies"
   ],
   "host_permissions": [
     "https://*/*",

@@ -15,6 +15,7 @@ interface AdProps {
       impactAnalysis: string;
       badEffects: string;
       hiddenProblems: string;
+      ecoAlternative?: string;
     };
   }
 }
@@ -24,7 +25,8 @@ export function HonestReceipt({ ad }: AdProps) {
     honestAd: ad.honestCopy,
     impactAnalysis: 'PENDING',
     badEffects: 'N/A',
-    hiddenProblems: 'N/A'
+    hiddenProblems: 'N/A',
+    ecoAlternative: 'N/A'
   };
 
   return (
@@ -66,16 +68,22 @@ export function HonestReceipt({ ad }: AdProps) {
       <div className="border-b-2 border-dashed border-receipt-gray/50 pb-4 mb-6 space-y-4">
         <div>
           <p className="font-bold text-[10px] uppercase text-receipt-gray mb-1">Detailed Impact:</p>
-          <p className="leading-tight text-[10px] text-receipt-gray">{analysis.impactAnalysis}</p>
+          <p className="leading-tight text-[10px] text-receipt-gray whitespace-pre-wrap">{analysis.impactAnalysis}</p>
         </div>
         <div>
           <p className="font-bold text-[10px] uppercase text-ad-coral mb-1">Detrimental Effects:</p>
-          <p className="leading-tight text-[10px] text-ad-coral">{analysis.badEffects}</p>
+          <p className="leading-tight text-[10px] text-ad-coral whitespace-pre-wrap">{analysis.badEffects}</p>
         </div>
         <div>
           <p className="font-bold text-[10px] uppercase text-warning-amber text-yellow-700 mb-1">Hidden Costs:</p>
-          <p className="leading-tight text-[10px] text-yellow-700">{analysis.hiddenProblems}</p>
+          <p className="leading-tight text-[10px] text-yellow-700 whitespace-pre-wrap">{analysis.hiddenProblems}</p>
         </div>
+        {analysis.ecoAlternative && analysis.ecoAlternative !== 'N/A' && (
+          <div>
+            <p className="font-bold text-[10px] uppercase text-green-600 mb-1">Eco Alternative:</p>
+            <p className="leading-tight text-[10px] text-green-600 whitespace-pre-wrap">{analysis.ecoAlternative}</p>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between items-end mb-8">

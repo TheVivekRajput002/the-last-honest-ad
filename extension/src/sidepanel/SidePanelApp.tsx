@@ -40,11 +40,29 @@ export default function SidePanelApp() {
   const startGeneration = async (text: string, categoryId: string) => {
     setGenerating(true);
     setError(null);
+    setPublished(false);
 
     try {
+      let token: string | undefined;
+      try {
+        if (chrome.cookies) {
+          const cookie = await chrome.cookies.get({ url: 'http://localhost:3000', name: '__session' });
+          if (cookie) {
+            token = cookie.value;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not retrieve session cookie:', err);
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('http://localhost:4000/api/ads/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ originalCopy: text.substring(0, 5000), categoryId })
       });
       const data = await res.json();
@@ -78,6 +96,41 @@ export default function SidePanelApp() {
     }
   };
 
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [published, setPublished] = useState(false);
+
+  const handlePublish = async () => {
+    if (!generatedAd || !generatedAd.id) return;
+    
+    setIsPublishing(true);
+    try {
+      let token: string | undefined;
+      if (chrome.cookies) {
+        const cookie = await chrome.cookies.get({ url: 'http://localhost:3000', name: '__session' });
+        if (cookie) token = cookie.value;
+      }
+      
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(`http://localhost:4000/api/gallery/${generatedAd.id}/publish`, {
+        method: 'POST',
+        headers
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPublished(true);
+      } else {
+        alert('Failed to publish: ' + (data.error?.message || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Publish error:', err);
+      alert('Failed to publish. Check console.');
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   return (
     <div className="h-screen w-full bg-[#FDFBF7] overflow-y-auto overflow-x-hidden font-sans text-ink flex flex-col relative">
       {/* Sticky Header */}
@@ -88,14 +141,23 @@ export default function SidePanelApp() {
         </h2>
         <div className="flex gap-2">
           {!isGenerating && generatedAd && !error && (
-            <button 
-              onClick={handleExport}
-              disabled={isExporting}
-              aria-label="Export as image"
-              className="p-1.5 text-ink/70 hover:text-ink hover:bg-ink/5 rounded-md transition-colors disabled:opacity-50"
-            >
-              <Download size={18} />
-            </button>
+            <>
+              <button 
+                onClick={handlePublish}
+                disabled={isPublishing || published}
+                className="px-2 py-1 text-[10px] font-mono uppercase tracking-widest bg-ad-coral text-white rounded transition-colors disabled:opacity-50"
+              >
+                {published ? 'Published' : isPublishing ? 'Publishing...' : 'Publish to Gallery'}
+              </button>
+              <button 
+                onClick={handleExport}
+                disabled={isExporting}
+                aria-label="Export as image"
+                className="p-1.5 text-ink/70 hover:text-ink hover:bg-ink/5 rounded-md transition-colors disabled:opacity-50"
+              >
+                <Download size={18} />
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -162,7 +224,7 @@ export default function SidePanelApp() {
                   <span className="w-1.5 h-1.5 bg-ink rounded-full"></span>
                   Impact Analysis
                 </h4>
-                <p className="text-xs text-ink/90 leading-relaxed">
+                <p className="text-xs text-ink/90 leading-relaxed whitespace-pre-wrap">
                   {generatedAd.analysis?.impactAnalysis || 'Detailed analysis pending...'}
                 </p>
               </div>
@@ -172,7 +234,7 @@ export default function SidePanelApp() {
                   <span className="w-1.5 h-1.5 bg-ad-coral rounded-full"></span>
                   Detrimental Effects
                 </h4>
-                <p className="text-xs text-ink/90 leading-relaxed">
+                <p className="text-xs text-ink/90 leading-relaxed whitespace-pre-wrap">
                   {generatedAd.analysis?.badEffects || 'Not specified.'}
                 </p>
               </div>
@@ -182,7 +244,7 @@ export default function SidePanelApp() {
                   <span className="w-1.5 h-1.5 bg-warning-amber rounded-full"></span>
                   Hidden Problems
                 </h4>
-                <p className="text-xs text-ink/90 leading-relaxed">
+                <p className="text-xs text-ink/90 leading-relaxed whitespace-pre-wrap">
                   {generatedAd.analysis?.hiddenProblems || 'Not specified.'}
                 </p>
               </div>

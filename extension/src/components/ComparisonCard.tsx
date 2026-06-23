@@ -79,7 +79,7 @@ export function ComparisonCard({ ad }: AdProps) {
                 <span className="w-1.5 h-1.5 bg-ink rounded-full"></span>
                 Environmental Impact
               </h4>
-              <p className="text-xs font-sans text-ink leading-relaxed">{analysis.impactAnalysis}</p>
+              <p className="text-xs font-sans text-ink leading-relaxed whitespace-pre-wrap">{analysis.impactAnalysis}</p>
             </div>
             
             <div className="bg-[#FFE5E5] p-4 rounded-xl border-l-4 border-ad-coral shadow-sm">
@@ -87,7 +87,7 @@ export function ComparisonCard({ ad }: AdProps) {
                 <span className="w-1.5 h-1.5 bg-ad-coral rounded-full"></span>
                 Detrimental Effects
               </h4>
-              <p className="text-xs font-sans text-ink leading-relaxed">{analysis.badEffects}</p>
+              <p className="text-xs font-sans text-ink leading-relaxed whitespace-pre-wrap">{analysis.badEffects}</p>
             </div>
 
             <div className="bg-[#FFF5D6] p-4 rounded-xl border-l-4 border-warning-amber shadow-sm">
@@ -95,7 +95,7 @@ export function ComparisonCard({ ad }: AdProps) {
                 <span className="w-1.5 h-1.5 bg-warning-amber rounded-full"></span>
                 Hidden Problems
               </h4>
-              <p className="text-xs font-sans text-ink leading-relaxed">{analysis.hiddenProblems}</p>
+              <p className="text-xs font-sans text-ink leading-relaxed whitespace-pre-wrap">{analysis.hiddenProblems}</p>
             </div>
           </div>
         </div>

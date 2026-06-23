@@ -12,20 +12,46 @@ let shadowRoot: ShadowRoot | null = null;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'EXTRACT_PAGE') {
     try {
-      // Clone the document safely using DOMParser to avoid Custom Element (__CE_registry) errors on sites like Amazon
-      const documentClone = new DOMParser().parseFromString(document.documentElement.outerHTML, 'text/html');
+      // E-commerce specific extraction
+      let extractedText = '';
       
-      // Use Readability to extract the main content
-      const reader = new Readability(documentClone);
-      const article = reader.parse();
+      // Amazon selectors
+      const amazonTitle = document.querySelector('#productTitle')?.textContent?.trim();
+      const amazonBullets = document.querySelector('#feature-bullets')?.textContent?.trim();
+      const amazonDesc = document.querySelector('#productDescription')?.textContent?.trim();
       
-      // Return the clean text
-      if (article && article.textContent) {
-        sendResponse({ success: true, text: article.textContent });
-      } else {
-        // Fallback to basic text if Readability fails
-        sendResponse({ success: true, text: document.body.innerText });
+      if (amazonTitle || amazonBullets || amazonDesc) {
+        extractedText = [amazonTitle, amazonBullets, amazonDesc].filter(Boolean).join('\n\n');
       }
+
+      if (!extractedText) {
+        // Flipkart selectors (common ones)
+        const fkTitle = document.querySelector('.B_NuCI, .VU-ZEz')?.textContent?.trim();
+        const fkHighlights = document.querySelector('._2418kt, .x-DJeS')?.textContent?.trim();
+        if (fkTitle || fkHighlights) {
+          extractedText = [fkTitle, fkHighlights].filter(Boolean).join('\n\n');
+        }
+      }
+
+      if (!extractedText) {
+        // Fallback to Readability
+        const documentClone = new DOMParser().parseFromString(document.documentElement.outerHTML, 'text/html');
+        const reader = new Readability(documentClone);
+        const article = reader.parse();
+        if (article && article.textContent) {
+          extractedText = article.textContent;
+        }
+      }
+
+      if (!extractedText) {
+        // Ultimate fallback
+        extractedText = document.body.innerText;
+      }
+
+      // Clean up the text a bit
+      extractedText = extractedText.replace(/\s+/g, ' ').trim();
+      
+      sendResponse({ success: true, text: extractedText });
     } catch (error: any) {
       console.error('[The Last Honest Ad] Extraction error:', error);
       sendResponse({ success: false, error: error.message });

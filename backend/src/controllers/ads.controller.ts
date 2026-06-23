@@ -54,6 +54,10 @@ export class AdsController {
             clerkId = decoded.sub;
           }
 
+          if (!clerkId) {
+            throw new Error('Missing sub claim in token');
+          }
+
           let user = await prisma.user.findUnique({ where: { clerkId } });
           if (!user) {
             user = await prisma.user.create({

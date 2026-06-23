@@ -41,6 +41,7 @@ export interface AdData {
     impactAnalysis: string;
     badEffects: string;
     hiddenProblems: string;
+    ecoAlternative?: string;
   };
   format: 'CARD' | 'RECEIPT';
   createdAt: string;
