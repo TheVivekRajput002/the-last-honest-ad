@@ -7,6 +7,17 @@ interface GeneratedAd {
   categoryId: string;
   footprintSaved: number;
   format: 'CARD' | 'RECEIPT';
+  co2eKg?: number;
+  waterLiters?: number;
+  wasteKg?: number;
+  analysis?: {
+    honestAd?: string;
+    impactAnalysis?: string;
+    badEffects?: string;
+    hiddenProblems?: string;
+    ecoAlternative?: string;
+  };
+  productName?: string;
 }
 
 interface ExtensionState {
@@ -16,6 +27,7 @@ interface ExtensionState {
   selectedCategory: string | null;
   isGenerating: boolean;
   generatedAd: GeneratedAd | null;
+  comparisonAd: GeneratedAd | null;
   error: string | null;
   
   setExtracting: (val: boolean) => void;
@@ -24,6 +36,7 @@ interface ExtensionState {
   setSelectedCategory: (category: string | null) => void;
   setGenerating: (val: boolean) => void;
   setGeneratedAd: (ad: GeneratedAd | null) => void;
+  setComparisonAd: (ad: GeneratedAd | null) => void;
   setError: (err: string | null) => void;
 }
 
@@ -34,6 +47,7 @@ export const useExtensionStore = create<ExtensionState>((set) => ({
   selectedCategory: null,
   isGenerating: false,
   generatedAd: null,
+  comparisonAd: null,
   error: null,
   
   setExtracting: (val) => set({ isExtracting: val }),
@@ -42,5 +56,6 @@ export const useExtensionStore = create<ExtensionState>((set) => ({
   setSelectedCategory: (category) => set({ selectedCategory: category }),
   setGenerating: (val) => set({ isGenerating: val }),
   setGeneratedAd: (ad) => set({ generatedAd: ad }),
+  setComparisonAd: (ad) => set({ comparisonAd: ad }),
   setError: (err) => set({ error: err }),
 }));

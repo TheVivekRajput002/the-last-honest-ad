@@ -7,13 +7,17 @@ import { Download } from 'lucide-react';
 import * as htmlToImage from 'html-to-image';
 
 export default function SidePanelApp() {
-  const { isGenerating, generatedAd, error, setGenerating, setError, setGeneratedAd } = useExtensionStore();
+  const { isGenerating, generatedAd, error, setGenerating, setError, setGeneratedAd, comparisonAd, setComparisonAd } = useExtensionStore();
   const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    // Check storage for pending generation
-    chrome.storage.local.get(['generationPayload'], (result) => {
+    // Check storage for pending generation and pinned ad
+    chrome.storage.local.get(['generationPayload', 'pinnedComparisonAd'], (result) => {
+      if (result.pinnedComparisonAd) {
+        setComparisonAd(result.pinnedComparisonAd);
+      }
+      
       if (result.generationPayload) {
         const payload = result.generationPayload as { text: string; categoryId: string };
         startGeneration(payload.text, payload.categoryId);
@@ -41,6 +45,9 @@ export default function SidePanelApp() {
     setGenerating(true);
     setError(null);
     setPublished(false);
+
+    const currentComparisonAd = useExtensionStore.getState().comparisonAd;
+    // Removed category restriction: allow comparing any two products.
 
     try {
       let token: string | undefined;
@@ -143,6 +150,20 @@ export default function SidePanelApp() {
           {!isGenerating && generatedAd && !error && (
             <>
               <button 
+                onClick={() => {
+                  if (comparisonAd?.id === generatedAd.id) {
+                    setComparisonAd(null);
+                    chrome.storage.local.remove('pinnedComparisonAd');
+                  } else {
+                    setComparisonAd(generatedAd);
+                    chrome.storage.local.set({ pinnedComparisonAd: generatedAd });
+                  }
+                }}
+                className="px-2 py-1 text-[10px] font-mono uppercase tracking-widest bg-ink text-paper rounded transition-colors disabled:opacity-50"
+              >
+                {comparisonAd?.id === generatedAd.id ? 'Unpin Compare' : 'Pin to Compare'}
+              </button>
+              <button 
                 onClick={handlePublish}
                 disabled={isPublishing || published}
                 className="px-2 py-1 text-[10px] font-mono uppercase tracking-widest bg-ad-coral text-white rounded transition-colors disabled:opacity-50"
@@ -216,6 +237,51 @@ export default function SidePanelApp() {
                 </div>
               </div>
             </div>
+
+            {/* Compare Mode Section */}
+            {comparisonAd && comparisonAd.id !== generatedAd.id && (
+              <div className="p-5 border-b border-dashed border-ink/10 bg-white">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-ink/50 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-ink rounded-full"></span>
+                    Comparison
+                  </div>
+                  <button onClick={() => {
+                    setComparisonAd(null);
+                    chrome.storage.local.remove('pinnedComparisonAd');
+                  }} className="text-[10px] text-stamp-red uppercase font-mono hover:underline">Clear</button>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-ink/60 mb-2 border-b border-ink/5 pb-2">
+                    <span className="w-2/5 truncate" title={comparisonAd.productName || 'Pinned Product'}>{comparisonAd.productName || 'Pinned Product'}</span>
+                    <span className="w-1/5 text-center">vs</span>
+                    <span className="w-2/5 text-right truncate text-ink font-bold" title={generatedAd.productName || 'Current Product'}>{generatedAd.productName || 'Current Product'}</span>
+                  </div>
+                  
+                  {/* CO2e Comparison */}
+                  <div className="flex justify-between items-center bg-[#FDFBF7] p-2 rounded">
+                    <span className={`w-2/5 font-display text-sm ${(comparisonAd.co2eKg || comparisonAd.footprintSaved) <= (generatedAd.co2eKg || generatedAd.footprintSaved) ? 'text-green-600 font-bold' : 'text-ink/60'}`}>{comparisonAd.co2eKg || comparisonAd.footprintSaved} kg</span>
+                    <span className="w-1/5 text-center text-[9px] font-mono text-ink/50 uppercase tracking-widest">CO₂e</span>
+                    <span className={`w-2/5 text-right font-display text-sm ${(generatedAd.co2eKg || generatedAd.footprintSaved) <= (comparisonAd.co2eKg || comparisonAd.footprintSaved) ? 'text-green-600 font-bold' : 'text-ink/60'}`}>{generatedAd.co2eKg || generatedAd.footprintSaved} kg</span>
+                  </div>
+
+                  {/* Water Comparison */}
+                  <div className="flex justify-between items-center bg-[#FDFBF7] p-2 rounded">
+                    <span className={`w-2/5 font-display text-sm ${(comparisonAd.waterLiters || 0) <= (generatedAd.waterLiters || 0) ? 'text-blue-500 font-bold' : 'text-ink/60'}`}>{comparisonAd.waterLiters || 0} L</span>
+                    <span className="w-1/5 text-center text-[9px] font-mono text-ink/50 uppercase tracking-widest">Water</span>
+                    <span className={`w-2/5 text-right font-display text-sm ${(generatedAd.waterLiters || 0) <= (comparisonAd.waterLiters || 0) ? 'text-blue-500 font-bold' : 'text-ink/60'}`}>{generatedAd.waterLiters || 0} L</span>
+                  </div>
+
+                  {/* Waste Comparison */}
+                  <div className="flex justify-between items-center bg-[#FDFBF7] p-2 rounded">
+                    <span className={`w-2/5 font-display text-sm ${(comparisonAd.wasteKg || 0) <= (generatedAd.wasteKg || 0) ? 'text-green-600 font-bold' : 'text-ink/60'}`}>{comparisonAd.wasteKg || 0} kg</span>
+                    <span className="w-1/5 text-center text-[9px] font-mono text-ink/50 uppercase tracking-widest">Waste</span>
+                    <span className={`w-2/5 text-right font-display text-sm ${(generatedAd.wasteKg || 0) <= (comparisonAd.wasteKg || 0) ? 'text-green-600 font-bold' : 'text-ink/60'}`}>{generatedAd.wasteKg || 0} kg</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Detailed Analysis Section */}
             <div className="p-5 flex flex-col gap-3 pb-8 bg-[#FDFBF7]">
